@@ -8,7 +8,6 @@ import { Node } from './node';
 import { Output } from './output';
 import { Selected } from './selected';
 import { Validator } from './core/validator';
-import { listenWindow } from './view/utils';
 import { EditorEvents, EventsTypes } from './events';
 
 export class NodeEditor extends Context<EventsTypes> {
@@ -19,11 +18,12 @@ export class NodeEditor extends Context<EventsTypes> {
 
     constructor(id: string, container: HTMLElement) {
         super(id, new EditorEvents());
-        
+
         this.view = new EditorView(container, this.components, this);
 
-        this.on('destroy', listenWindow('keydown', e => this.trigger('keydown', e)));
-        this.on('destroy', listenWindow('keyup', e => this.trigger('keyup', e)));
+        container.setAttribute('tabindex', '-1'); // make element focusable so it receives key events
+        container.addEventListener('keydown', e => this.trigger('keydown', e));
+        container.addEventListener('keyup', e => this.trigger('keyup', e));
 
         this.on('selectnode', ({ node, accumulate }) => this.selectNode(node, accumulate));
         this.on('nodeselected', () => this.selected.each(n => {

@@ -4,7 +4,7 @@ export class Drag {
 
     pointerStart: [number, number] | null;
     el: HTMLElement;
-    destroy: () => void;
+    destroy: () => void = () => {};
 
     constructor(
         el: HTMLElement,
@@ -17,16 +17,20 @@ export class Drag {
 
         this.el.style.touchAction = 'none';
         this.el.addEventListener('pointerdown', this.down.bind(this));
+    }
+
+    down(e: PointerEvent) {
+        if (this.pointerStart) {
+            this.destroy();
+        }
+
+        e.stopPropagation();
+        this.pointerStart = [e.pageX, e.pageY]
 
         const destroyMove = listenWindow('pointermove', this.move.bind(this));
         const destroyUp = listenWindow('pointerup', this.up.bind(this));
 
-        this.destroy = () => { destroyMove(); destroyUp(); }
-    }
-
-    down(e: PointerEvent) {
-        e.stopPropagation();
-        this.pointerStart = [e.pageX, e.pageY]
+        this.destroy = () => { destroyMove(); destroyUp(); };
 
         this.onStart(e);
     }
@@ -46,7 +50,10 @@ export class Drag {
 
     up(e: PointerEvent) {
         if (!this.pointerStart) return;
-        
+
+        this.destroy();
+        this.destroy = () => {};
+
         this.pointerStart = null;
         this.onDrag(e);
     }
