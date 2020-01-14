@@ -88,9 +88,42 @@ export class NodeEditor extends Context<EventsTypes> {
         
         if (!this.trigger('nodeselect', node)) return;
 
-        this.selected.add(node, accumulate);
-        
+        if (!accumulate) {
+            const prevSelected = this.selected.list;
+
+            // Must clear the selection before triggering 'nodedeselected' so that the handlers observe the deselection.
+            this.selected.clear();
+            prevSelected.forEach(prevNode => this.trigger('nodedeselected', prevNode));
+        }
+        this.selected.list.push(node);
+
         this.trigger('nodeselected', node);
+    }
+
+    deselectNode(node: Node) {
+        if (this.nodes.indexOf(node) === -1) {
+            throw new Error('The node does not belong to this editor')
+        }
+        if (!this.selected.contains(node)) {
+            console.warn('Rete.js: NodeEditor.deselectNodes: The node', node, 'is not selected');
+            return;
+        }
+        if (!this.trigger('nodedeselect', node)) {
+            return;
+        }
+        this.selected.remove(node);
+        this.trigger('nodedeselected', node);
+    }
+
+    toggleNodeSelection(node: Node) {
+        if (this.nodes.indexOf(node) === -1) {
+            throw new Error('The node does not belong to this editor');
+        }
+        if (this.selected.contains(node)) {
+            this.deselectNode(node);
+        } else {
+            this.selectNode(node, true);
+        }
     }
 
     getComponent(name: string) {

@@ -30,6 +30,8 @@ export class EditorEvents extends Events {
             multiselectnode: [],
             nodeselect: [],
             nodeselected: [],
+            nodedeselect: [],
+            nodedeselected: [],
             rendernode: [],
             rendersocket: [],
             rendercontrol: [],
@@ -77,6 +79,8 @@ export interface EventsTypes extends DefaultEventsTypes {
     };
     nodeselect: Node;
     nodeselected: Node;
+    nodedeselect: Node;
+    nodedeselected: Node;
     rendernode: {
         el: HTMLElement;
         node: Node;
