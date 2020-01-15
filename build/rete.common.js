@@ -1781,7 +1781,10 @@ function (_Context) {
         });
       }
 
-      this.selected.list.push(node);
+      if (!this.selected.list.includes(node)) {
+        this.selected.list.push(node);
+      }
+
       this.trigger('nodeselected', node);
     }
   }, {
