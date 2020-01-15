@@ -95,7 +95,9 @@ export class NodeEditor extends Context<EventsTypes> {
             this.selected.clear();
             prevSelected.forEach(prevNode => this.trigger('nodedeselected', prevNode));
         }
-        this.selected.list.push(node);
+        if (!this.selected.list.includes(node)) {
+            this.selected.list.push(node);
+        }
 
         this.trigger('nodeselected', node);
     }
