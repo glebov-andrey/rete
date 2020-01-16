@@ -1790,16 +1790,14 @@ function (_Context) {
         throw new Error('The node does not belong to this editor');
       }
 
-      if (!this.selected.contains(node)) {
-        console.warn('Rete.js: NodeEditor.deselectNodes: The node', node, 'is not selected');
-        return;
-      }
-
       if (!this.trigger('nodedeselect', node)) {
         return;
       }
 
-      this.selected.remove(node);
+      if (this.selected.contains(node)) {
+        this.selected.remove(node);
+      }
+
       this.trigger('nodedeselected', node);
     }
   }, {
